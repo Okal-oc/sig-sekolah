@@ -9,6 +9,7 @@ use App\Http\Controllers\ProfilSekolahController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\PasswordController;
 use App\Http\Controllers\AktivitasLogController;
+use Illuminate\Support\Facades\DB;
 
 // Publik
 Route::controller(PetaController::class)->group(function () {
@@ -25,6 +26,15 @@ Route::controller(PetaController::class)->group(function () {
 });
 Route::get('/profil/{sekolah}', [PetaController::class, 'profil'])
     ->name('sekolah.publik');
+
+    Route::get('/health', function () {
+    try {
+        DB::select('select 1');
+        return response()->json(['status' => 'ok', 'database' => 'connected']);
+    } catch (\Throwable $e) {
+        return response()->json(['status' => 'error', 'database' => 'unreachable'], 503);
+    }
+});
 
 // Tamu
 Route::middleware('guest')->group(function () {
